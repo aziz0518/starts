@@ -24,12 +24,11 @@ from aiogram import Bot, Dispatcher
 
 # PythonAnywhere proxy manzili
 PROXY_URL = "http://proxy.server:3128"
-
-# Botni yaratish qismini shunday o'zgartiring
-# bot_app/bot_script.py faylining 29-qatorini shunday o'zgartiring:
-bot = Bot(token="8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q", proxy=PROXY_URL)
+bot = Bot(
+    token="8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q", 
+    proxy=PROXY_URL
+)
 dp = Dispatcher(bot)
-
 # --- CONFIG ---
 ADMIN_ID = 5013572418
 PAYMENT_TOKEN = "398062629:TEST:999999999_F91D8F69C042267444B74CC0B3C747757EB0E065"
