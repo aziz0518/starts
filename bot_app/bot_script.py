@@ -26,7 +26,8 @@ from aiogram import Bot, Dispatcher
 PROXY_URL = "http://proxy.server:3128"
 
 # Botni yaratish qismini shunday o'zgartiring
-bot = Bot(token=os.getenv('8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q'), proxy=PROXY_URL)
+# bot_app/bot_script.py faylining 29-qatorini shunday o'zgartiring:
+bot = Bot(token="8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q", proxy=PROXY_URL)
 dp = Dispatcher(bot)
 
 # --- CONFIG ---
