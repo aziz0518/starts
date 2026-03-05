@@ -18,6 +18,16 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from bot_app.models import Product, Order, Category, TelegramUser, Cart, PromoCode
 from django.conf import settings
+# Faylning tepasiga buni qo'shing
+import os
+from aiogram import Bot, Dispatcher
+
+# PythonAnywhere proxy manzili
+PROXY_URL = "http://proxy.server:3128"
+
+# Botni yaratish qismini shunday o'zgartiring
+bot = Bot(token=os.getenv('8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q'), proxy=PROXY_URL)
+dp = Dispatcher(bot)
 
 # --- CONFIG ---
 ADMIN_ID = 5013572418
