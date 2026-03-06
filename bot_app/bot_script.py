@@ -22,14 +22,7 @@ from django.conf import settings
 import os
 from aiogram import Bot, Dispatcher
 
-# PythonAnywhere proxy manzili
-PROXY_URL = "http://proxy.server:3128"
-bot = Bot(
-    token="8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q", 
-    proxy=PROXY_URL
-)
-dp = Dispatcher(bot)
-# --- CONFIG ---
+bot = Bot(token=os.getenv('8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q'))
 ADMIN_ID = 5013572418
 PAYMENT_TOKEN = "398062629:TEST:999999999_F91D8F69C042267444B74CC0B3C747757EB0E065"
 
@@ -54,7 +47,7 @@ def register_user(user_id, name, username, ref_id=None):
         if referer:
             user.referred_by = referer
             user.save()
-            referer.balance += 500
+            referer.balance += 5000
             referer.save()
     return user
 
