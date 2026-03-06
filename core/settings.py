@@ -42,20 +42,23 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-TEMPLATES = [
+# core/settings.py faylida 48-qator atrofida
+
+TEMPLATES = [ # <-- Bu yerda To'rtburchak qavs ochilgan
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], # <-- Bu yerda ham to'g'ri bo'lishi kerak
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
-    },
-]
+    }, # <-- 57-qator: Bu yerda jingalak qavs va vergul
+] # <-- Bu yerda To'rtburchak qavs yopiladi
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
@@ -108,3 +111,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 BOT_TOKEN = "8446383314:AAFhDR8bvKs1DZSiDFA797xt0sE0Puoqg7Q"
+
+# settings.py
+ALLOWED_HOSTS = ['*']  # Vaqtincha hammani ruxsat beramiz   

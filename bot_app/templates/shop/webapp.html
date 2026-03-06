@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mini App Store Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --tg-bg: var(--tg-theme-bg-color, #ffffff);
+            --tg-text: var(--tg-theme-text-color, #212529);
+            --tg-hint: var(--tg-theme-hint-color, #999999);
+            --tg-link: var(--tg-theme-link-color, #248bcf);
+            --tg-btn: var(--tg-theme-button-color, #248bcf);
+            --tg-btn-text: var(--tg-theme-button-text-color, #ffffff);
+            --tg-sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+        }
+
+        body {
+            background-color: var(--tg-bg);
+            color: var(--tg-text);
+            font-family: -apple-system, system-ui, sans-serif;
+            padding-bottom: 90px;
+        }
+
+        /* Kategoriyalar slideri */
+        .category-scroll {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 15px;
+            gap: 10px;
+            background: var(--tg-sec-bg);
+            scrollbar-width: none;
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        
+        .cat-item {
+            padding: 6px 15px;
+            background: var(--tg-bg);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        .cat-item.active {
+            background: var(--tg-btn);
+            color: var(--tg-btn-text);
+        }
+
+        /* Mahsulotlar */
+        .product-card {
+            background: var(--tg-sec-bg);
+            border-radius: 16px;
+            padding: 12px;
+            height: 100%;
+            border: none;
+        }
+        .price-tag {
+            color: var(--tg-btn);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Savatcha Modali */
+        .modal-content {
+            background: var(--tg-bg);
+            color: var(--tg-text);
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Pastki Panel */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-bg);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding: 12px 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn-main {
+            background: var(--tg-btn);
+            color: var(--tg-btn-text);
+            border-radius: 12px;
+            border: none;
+            flex-grow: 1;
+            font-weight: 600;
+            padding: 12px;
+        }
+        
+        .btn-help {
+            background: var(--tg-sec-bg);
+            color: var(--tg-text);
+            border-radius: 12px;
+            border: none;
+            padding: 12px 18px;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff3b30;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sticky-top bg-white">
+    <div class="p-3 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-bold">Smart Shop</h5>
+        <span class="text-muted small" id="user-name"></span>
+    </div>
+    <div class="category-scroll">
+        <div class="cat-item active" onclick="filterCat('all', this)">Barchasi</div>
+        {% for cat in categories %}
+        <div class="cat-item" onclick="filterCat('{{ cat.id }}', this)">{{ cat.name }}</div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row g-3" id="product-grid">
+        {% for p in products %}
+        <div class="col-6 product-item" data-cat="{{ p.category.id }}">
+            <div class="product-card">
+                <div class="fw-bold mb-1">{{ p.name }}</div>
+                <div class="small text-muted mb-2">Mavjud: ✅</div>
+                <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <div class="price-tag">{{ p.price }}</div>
+                    <button class="btn btn-sm btn-primary rounded-pill" onclick="addToCart('{{ p.id }}', '{{ p.name }}', {{ p.price }})">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">🛒 Savatchangiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="cartItems">
+                <p class="text-center text-muted">Savatcha bo'sh</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button class="btn-main w-100" onclick="checkout()">Buyurtma berish (<span id="totalPrice">0</span> so'm)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <button class="btn-help" onclick="tg.showAlert('Yordam uchun: @az1z_0518')">
+        <i class="bi bi-question-circle"></i>
+    </button>
+    <button class="btn-main d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <span><i class="bi bi-cart3 me-2"></i> Savatcha</span>
+        <span id="cartCountBadge" class="badge bg-white text-primary rounded-pill">0</span>
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+    document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Mehmon";
+
+    let cart = {};
+
+    function filterCat(catId, el) {
+        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        
+        document.querySelectorAll('.product-item').forEach(item => {
+            if (catId === 'all' || item.getAttribute('data-cat') === catId) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function addToCart(id, name, price) {
+        if (cart[id]) {
+            cart[id].qty += 1;
+        } else {
+            cart[id] = { name: name, price: price, qty: 1 };
+        }
+        updateUI();
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function updateUI() {
+        let count = 0;
+        let total = 0;
+        let html = '';
+        
+        for (let id in cart) {
+            count += cart[id].qty;
+            total += cart[id].price * cart[id].qty;
+            html += `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="fw-bold">${cart[id].name}</div>
+                        <div class="small text-muted">${cart[id].price} x ${cart[id].qty}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-danger" onclick="changeQty('${id}', -1)">-</button>
+                        <span>${cart[id].qty}</span>
+                        <button class="btn btn-sm btn-outline-success" onclick="changeQty('${id}', 1)">+</button>
+                    </div>
+                </div>`;
+        }
+        
+        document.getElementById('cartItems').innerHTML = html || '<p class="text-center text-muted">Savatcha bo\'sh</p>';
+        document.getElementById('cartCountBadge').innerText = count;
+        document.getElementById('totalPrice').innerText = total.toLocaleString();
+    }
+
+    function changeQty(id, delta) {
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        updateUI();
+    }
+
+    function checkout() {
+        if (Object.keys(cart).length === 0) return tg.showAlert("Savat bo'sh!");
+        
+        // Telegram botga faqat birinchi mahsulot ID sini yuboramiz (soddalik uchun)
+        // Murakkabroq qilish uchun JSON.stringify(cart) yuborsa ham bo'ladi
+        let firstId = Object.keys(cart)[0];
+        tg.sendData(firstId);
+        tg.close();
+    }
+</script>
+
+</body>
+</html>
