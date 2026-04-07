@@ -12,7 +12,7 @@ frozenlist==1.4.0
 idna==3.4
 magic-filter==1.0.12
 multidict==6.0.4
-pillow==10.1.0
+pillow==10.3.0
 pytz==2023.3.post1
 sqlparse==0.4.4
 typing_extensions==4.8.0
